@@ -41,6 +41,11 @@ $application->add(new class extends Command {
             $logger
         );
 
+        $interval = (int)getenv('INTERVAL');
+        if ($interval <= 0) {
+            $interval = 60;
+        }
+
         while(true) {
             try {
                 $yaleStatus = $yale->deviceStatuses();
@@ -63,7 +68,7 @@ $application->add(new class extends Command {
             } catch (\Throwable $t) {
                 $logger->critical('Uncaught exception: ' . $t->getMessage(), ['exception' => $t]);
             } finally {
-                sleep(5);
+                sleep($interval);
             }
         }
 
