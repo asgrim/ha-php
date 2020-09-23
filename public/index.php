@@ -58,11 +58,13 @@ echo implode('</li><li>', array_map(static function ($item) {
         $item['downFor'] === null
             ? ''
             : (
-                $item['state'] === 'off' ? ' - up for' : ' - down for'
+                '<br /><ul><li style="color: grey;">' . ($item['state'] === 'off' ? 'up for' : 'down for')
             ),
         $item['downFor'] === null
             ? ''
-            : $item['downFor']->format('%ad %Hh %Im %Ss')
+            : (
+                $item['downFor']->format('%ad %Hh %Im %Ss') . '</li></ul>'
+            )
     );
 }, $stateChanges));
 echo "</li></ul>";
