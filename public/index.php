@@ -13,11 +13,13 @@ if (array_key_exists('days', $_GET)) {
     }
 }
 
-echo "<h1>$ndays days history</h1>";
+echo ' <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"> ';
+echo "<style>html { font-family: 'Roboto', sans-serif; }</style>";
+echo "<h3>$ndays days history</h3>";
 
 $since = new DateTimeImmutable($ndays . ' days ago');
 
-$s = $pdo->prepare("SELECT state, created FROM states WHERE entity_id = 'binary_sensor.internet_connectivity_8_8_8_8' AND created >= :since");
+$s = $pdo->prepare("SELECT state, created FROM states WHERE entity_id = 'binary_sensor.internet_connectivity_8_8_8_8' AND created >= :since ORDER BY created ASC");
 $s->execute([
     'since' => $since->format('Y-m-d H:i:s'),
 ]);
@@ -64,4 +66,16 @@ echo implode('</li><li>', array_map(static function ($item) {
     );
 }, $stateChanges));
 echo "</li></ul>";
-?>
+
+
+echo '<p style="color: grey;">Query parameters: days=[int] details=true</p>';
+
+if (array_key_exists('details', $_GET) && $_GET['details'] === 'true') {
+    echo implode('<br />', array_map(static function (array $item): string {
+        return sprintf(
+            '%s - %s',
+            $item['created'],
+            $item['state']
+        );
+    }, $results));
+}
