@@ -13,7 +13,6 @@ if (array_key_exists('days', $_GET)) {
     }
 }
 
-echo ' <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"> ';
 echo "<style>html { font-family: 'Roboto', sans-serif; }</style>";
 echo "<h3>$ndays days history</h3>";
 
@@ -81,3 +80,5 @@ if (array_key_exists('details', $_GET) && $_GET['details'] === 'true') {
         );
     }, $results));
 }
+
+echo ' <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"> ';
