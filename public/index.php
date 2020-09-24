@@ -66,7 +66,7 @@ echo implode('</li><li>', array_map(static function ($item) {
                 $item['downFor']->format('%ad %Hh %Im %Ss') . '</li></ul>'
             )
     );
-}, $stateChanges));
+}, array_reverse($stateChanges)));
 echo "</li></ul>";
 
 
