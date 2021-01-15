@@ -8,6 +8,7 @@ use Asgrim\HaPhp\YaleClient\YaleClient;
 use Http\Client\Curl\Client;
 use Monolog\Handler\ErrorLogHandler;
 use Monolog\Logger;
+use Psr\Log\LogLevel;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,7 +24,12 @@ $application->add(new class extends Command {
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $logger = new Logger('ha-php');
-        $logger->pushHandler(new ErrorLogHandler());
+        $logger->pushHandler(new ErrorLogHandler(
+            ErrorLogHandler::OPERATING_SYSTEM,
+            getenv('LOG_LEVEL') !== false
+                ? getenv('LOG_LEVEL')
+                : LogLevel::DEBUG
+        ));
 
         $httpClient = new Client();
 
@@ -68,6 +74,7 @@ $application->add(new class extends Command {
             } catch (\Throwable $t) {
                 $logger->critical('Uncaught exception: ' . $t->getMessage(), ['exception' => $t]);
             } finally {
+                $logger->info('Interval done, sleeping.');
                 sleep($interval);
             }
         }

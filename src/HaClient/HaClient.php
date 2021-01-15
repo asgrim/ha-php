@@ -59,7 +59,7 @@ class HaClient
         Assert::allString(array_keys($attributes));
         Assert::allString($attributes);
 
-        $this->logger->info(sprintf('Setting state of %s to %s', $entity, $state));
+        $this->logger->debug(sprintf('Setting state of %s to %s', $entity, $state));
 
         $response = $this->client->sendRequest($this->requestFactory(
             'POST',

@@ -169,7 +169,7 @@ class YaleClient
                     case 'normal':
                         return 'normal';
                     default:
-                        $this->logger->info("Unknown device status found: " . $yaleStatus);
+                        $this->logger->notice("Unknown device status found: " . $yaleStatus);
                         return $yaleStatus;
                 }
             },

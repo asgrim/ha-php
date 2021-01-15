@@ -15,6 +15,7 @@ Copy `.env.dist` to `.env`, and configure it. Descriptions of the environment va
 
 ### Environment variables required
 
+ - `LOG_LEVEL` how verbose the logging is - defaults to `debug`, but recommend to `info` (1 log per interval) or `notice` (only logs when things go wrong)
  - `YALE_*` are the Yale smart alarm credentials
  - `HA_URL` is the Home Assistant URL
  - `HA_TOKEN` you must generate from your HA install (go to your own user profile, click `Create Token` in `Long-Lived Access Tokens` section at the bottom)
