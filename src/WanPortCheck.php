@@ -4,23 +4,30 @@ declare(strict_types=1);
 
 namespace Asgrim\HaPhp;
 
+use Psr\Log\LoggerInterface;
+
 final class WanPortCheck
 {
+    /** @var LoggerInterface */
+    private $logger;
     /** @var string */
     private $gatewayIp;
-
     /** @var array<string,string> */
     private $wanGateways;
+    /** @var int */
+    private $traceHops;
 
-    public function __construct(string $gatewayIp, array $wanGateways)
+    public function __construct(LoggerInterface $logger, string $gatewayIp, array $wanGateways, int $traceHops)
     {
+        $this->logger = $logger;
         $this->gatewayIp = $gatewayIp;
         $this->wanGateways = $wanGateways;
+        $this->traceHops = $traceHops > 0 ? $traceHops : 4;
     }
 
     public function __invoke(): string
     {
-        exec('traceroute -m4 8.8.8.8 2>&1', $output, $result);
+        exec('traceroute -m' . $this->traceHops . ' 8.8.8.8 2>&1', $output, $result);
 
         if ($result !== 0) {
             throw new \RuntimeException('Failed to do trace: ' . implode($output));
@@ -38,6 +45,8 @@ final class WanPortCheck
             },
             $output
         );
+
+        $this->logger->debug('Traceroute: ' . implode(' > ', $parsedHops));
 
         $foundGateway = false;
         foreach ($parsedHops as $hop)

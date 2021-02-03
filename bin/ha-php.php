@@ -48,8 +48,10 @@ $application->add(new class extends Command {
         );
 
         $wanPortCheck = new WanPortCheck(
+            $logger,
             getenv('GATEWAY_IP'),
-            json_decode(getenv('WAN_GATEWAYS'), true, 512, JSON_THROW_ON_ERROR)
+            json_decode(getenv('WAN_GATEWAYS'), true, 512, JSON_THROW_ON_ERROR),
+            (int) getenv('TRACE_HOPS')
         );
 
         $interval = (int)getenv('INTERVAL');
@@ -78,7 +80,7 @@ $application->add(new class extends Command {
                 );
 
                 $wanPortValue = $wanPortCheck();
-                $logger->debug('WAN port value: ' . $wanPortValue);
+                $logger->info('WAN port value: ' . $wanPortValue);
                 $homeAssistant->setState(
                     'sensor.asgrim_wan_port',
                     $wanPortValue,
