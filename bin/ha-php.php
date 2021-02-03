@@ -47,6 +47,11 @@ $application->add(new class extends Command {
             $logger
         );
 
+        $wanPortCheck = new WanPortCheck(
+            getenv('GATEWAY_IP'),
+            json_decode(getenv('WAN_GATEWAYS'), true, 512, JSON_THROW_ON_ERROR)
+        );
+
         $interval = (int)getenv('INTERVAL');
         if ($interval <= 0) {
             $interval = 60;
@@ -71,6 +76,13 @@ $application->add(new class extends Command {
                         );
                     }
                 );
+
+                $homeAssistant->setState(
+                    'sensor.asgrim_wan_port',
+                    $wanPortCheck(),
+                    []
+                );
+
             } catch (\Throwable $t) {
                 $logger->critical('Uncaught exception: ' . $t->getMessage(), ['exception' => $t]);
             } finally {

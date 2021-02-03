@@ -20,6 +20,8 @@ Copy `.env.dist` to `.env`, and configure it. Descriptions of the environment va
  - `HA_URL` is the Home Assistant URL
  - `HA_TOKEN` you must generate from your HA install (go to your own user profile, click `Create Token` in `Long-Lived Access Tokens` section at the bottom)
  - `INTERVAL` how often to poll Yale smart alarm and update HA (in seconds)
+ - `GATEWAY_IP` the gateway for the WAN port checker that supports dual-WAN configuration
+ - `WAN_GATEWAYS` IP to label maps of the known WAN gateways, JSON object `{"192.168.x.x":"WAN 1","192.168.y.y":"WAN 2"}` - can just be `{}` to not label
 
 ### Running it
 
