@@ -77,9 +77,11 @@ $application->add(new class extends Command {
                     }
                 );
 
+                $wanPortValue = $wanPortCheck();
+                $logger->debug('WAN port value: ' . $wanPortValue);
                 $homeAssistant->setState(
                     'sensor.asgrim_wan_port',
-                    $wanPortCheck(),
+                    $wanPortValue,
                     []
                 );
 
