@@ -1,7 +1,7 @@
 FROM php:7.4-cli-alpine AS base
 
-RUN apk --no-cache add postgresql postgresql-dev bash \
-    && docker-php-ext-install pdo pdo_pgsql pgsql
+RUN apk --no-cache add postgresql postgresql-dev bash libxml2-dev \
+    && docker-php-ext-install pdo pdo_pgsql pgsql dom
 
 WORKDIR /app
 

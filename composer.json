@@ -4,6 +4,7 @@
     "type": "project",
     "require": {
         "php": ">= 7.3.0, < 7.5.0",
+        "ext-dom": "*",
         "ext-json": "*",
         "ext-pdo": "*",
         "ext-pdo_pgsql": "*",

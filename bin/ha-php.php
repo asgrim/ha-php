@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Asgrim\HaPhp;
 
 use Asgrim\HaPhp\HaClient\HaClient;
+use Asgrim\HaPhp\PelletPrice\FetchPelletPrice;
 use Asgrim\HaPhp\YaleClient\YaleClient;
 use Http\Client\Curl\Client;
 use Monolog\Handler\ErrorLogHandler;
@@ -54,10 +55,19 @@ $application->add(new class extends Command {
             (int) getenv('TRACE_HOPS')
         );
 
+        $fetchPelletPrice = new FetchPelletPrice(
+            $httpClient,
+            $logger,
+            getenv('PELLET_PRODUCT_URL'),
+            getenv('PELLET_SELECTOR')
+        );
+
         $interval = (int)getenv('INTERVAL');
         if ($interval <= 0) {
             $interval = 60;
         }
+
+        $lastPelletPriceCheck = 0;
 
         while(true) {
             try {
@@ -87,6 +97,25 @@ $application->add(new class extends Command {
                     []
                 );
 
+                $now = time();
+                $timeSinceLastPelletPriceCheck = $now - $lastPelletPriceCheck;
+                if ($timeSinceLastPelletPriceCheck > 86400) {
+                    $lastPelletPriceCheck = $now;
+                    $pelletPrice = $fetchPelletPrice();
+                    $logger->info('Current pellet price: ' . $pelletPrice);
+                    $homeAssistant->setState(
+                        'sensor.asgrim_pellet_price',
+                        $pelletPrice,
+                        [
+                            'name' => 'Biomass pellet price',
+                            'device_class' => 'monetary',
+                            'unit_of_measurement' => '£',
+                            'icon_template' => 'mdi:pine-tree-fire',
+                        ]
+                    );
+                } else {
+                    $logger->debug(sprintf('Skipping pellet price check, last check was %d seconds ago', $timeSinceLastPelletPriceCheck));
+                }
             } catch (\Throwable $t) {
                 $logger->critical('Uncaught exception: ' . $t->getMessage(), ['exception' => $t]);
             } finally {
