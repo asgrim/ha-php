@@ -62,6 +62,11 @@ $application->add(new class extends Command {
             getenv('PELLET_SELECTOR')
         );
 
+        $pelletRequestFrequency = (int)getenv('PELLET_REQUEST_FREQUENCY_SECS');
+        if ($pelletRequestFrequency <= 0) {
+            $pelletRequestFrequency = 21600;
+        }
+
         $interval = (int)getenv('INTERVAL');
         if ($interval <= 0) {
             $interval = 60;
@@ -99,7 +104,7 @@ $application->add(new class extends Command {
 
                 $now = time();
                 $timeSinceLastPelletPriceCheck = $now - $lastPelletPriceCheck;
-                if ($timeSinceLastPelletPriceCheck > 86400) {
+                if ($timeSinceLastPelletPriceCheck > $pelletRequestFrequency) {
                     $lastPelletPriceCheck = $now;
                     $pelletPrice = $fetchPelletPrice();
                     $logger->info('Current pellet price: ' . $pelletPrice);

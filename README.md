@@ -23,6 +23,9 @@ Copy `.env.dist` to `.env`, and configure it. Descriptions of the environment va
  - `GATEWAY_IP` the gateway for the WAN port checker that supports dual-WAN configuration
  - `WAN_GATEWAYS` IP to label maps of the known WAN gateways, JSON object `{"192.168.x.x":"WAN 1","192.168.y.y":"WAN 2"}` - can just be `{}` to not label
  - `TRACE_HOPS` WAN traceroute number of hops
+ - `PELLET_PRODUCT_URL` URL for the product for pellet price checking
+ - `PELLET_SELECTOR` xpath selector for the price itself
+ - `PELLET_REQUEST_FREQUENCY_SECS` how often to check for pellet prices
 
 ### Running it
 
