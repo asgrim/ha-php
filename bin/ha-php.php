@@ -66,11 +66,13 @@ $application->add(new class extends Command {
         if ($pelletRequestFrequency <= 0) {
             $pelletRequestFrequency = 21600;
         }
+        $logger->info(sprintf('Pellet price request frequency: %d secs', $pelletRequestFrequency));
 
         $interval = (int)getenv('INTERVAL');
         if ($interval <= 0) {
             $interval = 60;
         }
+        $logger->info(sprintf('Loop interval: %d secs', $interval));
 
         $lastPelletPriceCheck = 0;
 
@@ -95,7 +97,7 @@ $application->add(new class extends Command {
                 );
 
                 $wanPortValue = $wanPortCheck();
-                $logger->info('WAN port value: ' . $wanPortValue);
+                $logger->debug('WAN port value: ' . $wanPortValue);
                 $homeAssistant->setState(
                     'sensor.asgrim_wan_port',
                     $wanPortValue,
@@ -124,7 +126,7 @@ $application->add(new class extends Command {
             } catch (\Throwable $t) {
                 $logger->critical('Uncaught exception: ' . $t->getMessage(), ['exception' => $t]);
             } finally {
-                $logger->info('Interval done, sleeping.');
+                $logger->debug('Interval done, sleeping.');
                 sleep($interval);
             }
         }
