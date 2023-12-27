@@ -18,9 +18,19 @@ echo "<h3>$ndays days history</h3>";
 
 $since = new DateTimeImmutable($ndays . ' days ago');
 
-$s = $pdo->prepare("SELECT state, created FROM states WHERE entity_id = 'binary_sensor.internet_connectivity_8_8_8_8' AND created >= :since ORDER BY created ASC");
+$s = $pdo->prepare(<<<'SQL'
+SELECT states.state, states.last_updated_ts
+FROM states
+    JOIN states_meta ON (
+        states.metadata_id = states_meta.metadata_id
+        AND states_meta.entity_id = 'binary_sensor.internet_connectivity_8_8_8_8'
+    )
+WHERE last_updated_ts >= :since_ts
+ORDER BY state_id DESC
+SQL
+);
 $s->execute([
-    'since' => $since->format('Y-m-d H:i:s'),
+    'since_ts' => $since->format('U'),
 ]);
 $results = $s->fetchAll(PDO::FETCH_ASSOC);
 
@@ -32,7 +42,8 @@ array_walk(
     $results,
     static function (array $item) use (&$state, &$stateChanges, &$stateChangeTime) : void {
         if ($item['state'] !== $state) {
-            $time = new DateTimeImmutable($item['created']);
+            $time = (new DateTimeImmutable())
+                ->setTimestamp((int) $item['last_updated_ts']);
 
             $downFor = null;
             if ($stateChangeTime !== null) {
