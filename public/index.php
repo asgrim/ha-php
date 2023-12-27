@@ -86,7 +86,9 @@ if (array_key_exists('details', $_GET) && $_GET['details'] === 'true') {
     echo implode('<br />', array_map(static function (array $item): string {
         return sprintf(
             '%s - %s',
-            $item['created'],
+            (new DateTimeImmutable())
+                ->setTimestamp((int) $item['last_updated_ts'])
+                ->format('Y-m-d H:i:s'),
             $item['state']
         );
     }, $results));
